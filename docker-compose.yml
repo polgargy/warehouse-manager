@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  nginx:
+    build:
+      context: docker/${DOCKER_ENV}/nginx
+      dockerfile: Dockerfile
+      args:
+        - NGINX_VERSION=${NGINX_VERSION}
+    volumes:
+      - ./:/var/www
+      - ./docker/${DOCKER_ENV}/nginx/logs:/var/log/nginx
+    ports:
+      - "${APP_PORT}:80"
+    links:
+      - php
+
+  php:
+    build:
+      context: docker/${DOCKER_ENV}/php
+      dockerfile: Dockerfile
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+    volumes:
+      - ./:/var/www
+    links:
+      - mariadb
+
+  # MariaDB
+  mariadb:
+    build:
+      context: docker/${DOCKER_ENV}/mariadb
+      dockerfile: Dockerfile
+      args:
+        - MARIADB_VERSION=${MARIADB_VERSION}
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    expose:
+      - "3306"
+    volumes:
+      # Database volume
+      - database:/var/lib/mysql
+
+volumes:
+  database:
+    driver: local
