@@ -1,0 +1,14 @@
+{
+    "name": "polgargy/warehouse-manager",
+    "description": "A simple warehouse manager API built with PHP",
+    "type": "project",
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
